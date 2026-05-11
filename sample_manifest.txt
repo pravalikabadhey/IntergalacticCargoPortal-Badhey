@@ -1,0 +1,8 @@
+ID|ORIGIN|DESTINATION|WEIGHT
+C1|Mars|Sector-7|100
+C2|Mars|Sector-7|4
+C3|Jupiter|Mars|8
+C4|Jupiter|Mars|2
+C5|Saturn|Earth|9999
+C6|Pluto|Sector-7-Outpost|10
+C7|Mars|Sector-7|2
