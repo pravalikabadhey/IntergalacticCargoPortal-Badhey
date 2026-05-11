@@ -13,7 +13,7 @@ pip install -r backend/requirements.txt
 uvicorn app.main:app --reload --port 8000 --app-dir backend
 ```
 
-The `users` table is created on first start in `backend/cargo.db`.
+The `users` table is created on first start in `/Users/pravalikabadhey/Desktop/Evaluation_proj_Pravuu/common_database/cargo.db`.
 
 ## What to test
 
@@ -24,12 +24,12 @@ Email ending **exactly** in `@nebula-corp.com` → `Admin`. Everything else → 
 ```bash
 # Admin
 curl -X POST http://localhost:8000/signup -H "Content-Type: application/json" \
-  -d '{"email":"founder@nebula-corp.com","password":"secret123"}'
+  -d '{"email":"founder@nebula-corp.com","password":"abcd"}'
 # → {"id":1,"email":"founder@nebula-corp.com","role":"Admin"}
 
 # Standard
 curl -X POST http://localhost:8000/signup -H "Content-Type: application/json" \
-  -d '{"email":"alice@example.com","password":"x"}'
+  -d '{"email":"alice@example.com","password":"pqrs"}'
 # → {"id":2,"email":"alice@example.com","role":"Standard"}
 
 # Role spoof in payload — silently dropped, still Standard
@@ -59,7 +59,7 @@ Wrong password → `401`. Duplicate signup → `409`.
 
 ### 3. Schema
 
-For the Task 1 submission screenshot, inspect `backend/cargo.db` in DB Browser for SQLite. Expected schema:
+For the Task 1 submission screenshot, inspect `/Users/pravalikabadhey/Desktop/Evaluation_proj_Pravuu/common_database/cargo.db` in DB Browser for SQLite. Expected schema:
 
 ```
 users
