@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import models  # noqa: F401  (register SQLAlchemy models before create_all)
 from .db import Base, engine
+from .routes import auth as auth_routes
 
 Base.metadata.create_all(bind=engine)
 
@@ -15,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_routes.router)
 
 
 @app.get("/health")
