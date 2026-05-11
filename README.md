@@ -4,12 +4,13 @@ This branch (`task-1-foundation`) delivers the FastAPI server, SQLite schema, an
 
 ## Run
 
+All commands here are run from the **worktree root** (this directory). `--app-dir backend` tells uvicorn where the `app/` package lives, so you don't have to `cd` first.
+
 ```bash
-cd backend
 python -m venv .venv
-.venv\Scripts\Activate.ps1   # PowerShell, or: source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+.venv\Scripts\Activate.ps1            # PowerShell, or: source .venv/bin/activate
+pip install -r backend/requirements.txt
+uvicorn app.main:app --reload --port 8000 --app-dir backend
 ```
 
 The `users` table is created on first start in `backend/cargo.db`.
