@@ -14,3 +14,14 @@ class UserOut(BaseModel):
     id: int
     email: EmailStr
     role: str
+
+
+class LoginIn(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str
