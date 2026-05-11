@@ -6,14 +6,13 @@ This branch (`task-3-frontend`) adds the Vite + React + TypeScript SPA with a Lo
 
 Two terminals — backend first, then frontend.
 
-**Terminal 1 — backend (port 8000):**
+**Terminal 1 — backend (port 8000), run from the worktree root:**
 
 ```bash
-cd backend
 python -m venv .venv
-.venv\Scripts\Activate.ps1   # or: source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+.venv\Scripts\Activate.ps1            # or: source .venv/bin/activate
+pip install -r backend/requirements.txt
+uvicorn app.main:app --reload --port 8000 --app-dir backend
 ```
 
 **Terminal 2 — frontend (port 5173):**
