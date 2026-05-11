@@ -21,3 +21,4 @@ class Cargo(Base):
     origin: Mapped[str] = mapped_column(String, nullable=False)
     destination: Mapped[str] = mapped_column(String, nullable=False)
     weight_kg: Mapped[int] = mapped_column(Integer, nullable=False)
+    manifest_date: Mapped[str] = mapped_column(String, nullable=True)

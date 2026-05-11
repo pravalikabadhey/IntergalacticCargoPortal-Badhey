@@ -1,8 +1,12 @@
-ID|ORIGIN|DESTINATION|WEIGHT
-C1|Mars|Sector-7|100
-C2|Mars|Sector-7|4
-C3|Jupiter|Mars|8
-C4|Jupiter|Mars|2
-C5|Saturn|Earth|9999
-C6|Pluto|Sector-7-Outpost|10
-C7|Mars|Sector-7|2
+[2026-03-29] || CRG-001 :: 500 >> Mars Base Alpha
+[2026-03-29] || CRG-002 :: 17 >> Lunar Outpost Delta
+[2026-03-29] || CRG-003 :: 250 >> Titan Colony
+[2026-03-29] || CRG-004 :: 80 >> Venus Floating Station
+[2026-03-29] || CRG-005 :: 20 >> Sector-7 Mining Rig
+[2026-03-29] || CRG-006 :: 305 >> Europa Ice Drill
+[2026-03-29] || CRG-007 :: 42 >> Asteroid Belt Hub
+[2026-03-29] || CRG-008 :: 9999 >> Earth
+[2026-03-29] || CRG-009 :: 150 >> Jupiter Orbital
+[2026-03-29] || CRG-010 :: 8 >> Pluto Research Facility
+[2026-03-29] || CRG-011 :: 600 >> Neptune Deep Space Relay
+[2026-03-29] || CRG-012 :: 100 >> Sector-7 Command Center

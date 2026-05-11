@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 
@@ -35,6 +37,7 @@ class CargoOut(BaseModel):
     origin: str
     destination: str
     weight_kg: int
+    manifest_date: Optional[str] = None
 
 
 class UploadResultOut(BaseModel):

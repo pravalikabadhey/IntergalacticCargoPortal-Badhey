@@ -41,6 +41,60 @@ def parse_manifest(text: str) -> ParseStats:
             continue
         if line_no == 1 and "WEIGHT" in line.upper():
             continue
+        
+        # Try new format: [YYYY-MM-DD] || CARGO_ID :: WEIGHT >> DESTINATION
+        if "||" in line and "::" in line and ">>" in line:
+            try:
+                # Extract date from [YYYY-MM-DD]
+                date_start = line.find("[")
+                date_end = line.find("]")
+                if date_start == -1 or date_end == -1:
+                    malformed += 1
+                    continue
+                manifest_date = line[date_start + 1:date_end].strip()
+                
+                # Get the rest after the date bracket
+                rest = line[date_end + 1:].strip()
+                
+                # Remove || prefix
+                if not rest.startswith("||"):
+                    malformed += 1
+                    continue
+                rest = rest[2:].strip()
+                
+                # Split by >>
+                parts = rest.split(">>")
+                if len(parts) != 2:
+                    malformed += 1
+                    continue
+                
+                # Parse cargo_id and weight (format: CARGO_ID :: WEIGHT)
+                cargo_weight_part = parts[0].strip()
+                destination = parts[1].strip()
+                
+                cargo_weight = cargo_weight_part.split("::")
+                if len(cargo_weight) != 2:
+                    malformed += 1
+                    continue
+                
+                cargo_id = cargo_weight[0].strip()
+                weight = float(cargo_weight[1].strip())
+                
+                rows.append(
+                    {
+                        "cargo_id": cargo_id,
+                        "origin": "",  # Origin not in new format
+                        "destination": destination,
+                        "weight": weight,
+                        "manifest_date": manifest_date,
+                    }
+                )
+                continue
+            except (ValueError, IndexError):
+                malformed += 1
+                continue
+        
+        # Fallback to old format: ID|ORIGIN|DESTINATION|WEIGHT
         parts = [p.strip() for p in line.split("|")]
         if len(parts) != 4:
             malformed += 1
@@ -56,6 +110,7 @@ def parse_manifest(text: str) -> ParseStats:
                 "origin": parts[1],
                 "destination": parts[2],
                 "weight": weight,
+                "manifest_date": None,
             }
         )
     return ParseStats(rows=rows, malformed=malformed)
