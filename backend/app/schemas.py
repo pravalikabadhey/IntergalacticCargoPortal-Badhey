@@ -25,3 +25,20 @@ class TokenOut(BaseModel):
     access_token: str
     token_type: str = "bearer"
     role: str
+
+
+class CargoOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    cargo_id: str
+    origin: str
+    destination: str
+    weight_kg: int
+
+
+class UploadResultOut(BaseModel):
+    received: int
+    saved: int
+    skipped_prime: int
+    malformed: int

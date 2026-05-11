@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models  # noqa: F401  (register SQLAlchemy models before create_all)
 from .db import Base, engine
 from .routes import auth as auth_routes
+from .routes import cargo as cargo_routes
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_routes.router)
+app.include_router(cargo_routes.router)
 
 
 @app.get("/health")
