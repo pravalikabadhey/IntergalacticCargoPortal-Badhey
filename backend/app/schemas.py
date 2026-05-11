@@ -35,3 +35,10 @@ class CargoOut(BaseModel):
     origin: str
     destination: str
     weight_kg: int
+
+
+class UploadResultOut(BaseModel):
+    received: int
+    saved: int
+    skipped_prime: int
+    malformed: int
