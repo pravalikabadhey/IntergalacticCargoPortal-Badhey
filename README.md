@@ -4,22 +4,24 @@ This branch (`task-2-core-engine`) builds on Task 1 by adding the `Cargo` table,
 
 ## Run
 
+All commands run from the **worktree root**. `--app-dir backend` lets uvicorn find the `app/` package without changing directory.
+
 ```bash
-cd backend
 python -m venv .venv
-.venv\Scripts\Activate.ps1   # or: source .venv/bin/activate
-pip install -r requirements.txt
-pip install pytest           # for the unit tests
-uvicorn app.main:app --reload --port 8000
+.venv\Scripts\Activate.ps1            # or: source .venv/bin/activate
+pip install -r backend/requirements.txt
+pip install pytest                    # for the unit tests
+uvicorn app.main:app --reload --port 8000 --app-dir backend
 ```
 
 ## What to test
 
 ### 1. Unit tests (parser + business rules)
 
+Run from the worktree root (pytest needs to find the `app` package, hence the `cd`):
+
 ```bash
-cd backend
-pytest -q
+cd backend && pytest -q
 # expected: 24 passed
 ```
 
