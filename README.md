@@ -1,140 +1,102 @@
-# IntergalacticCargoPortal — Badhey
+# Task 3 — Frontend Dashboard
 
-Full-stack portal with Authentication and Role-Based Access Control (RBAC) for legacy cargo manifests.
+This branch (`task-3-frontend`) adds the Vite + React + TypeScript SPA with a Login/Signup screen and a role-aware Dashboard. It includes the full backend from Tasks 1–2 so the whole portal runs end-to-end from this worktree.
 
-**Stack:** Python (FastAPI) · SQLite · React (Vite + TypeScript) · JWT auth
+## Run both servers
 
-## Repository layout
+Two terminals — backend first, then frontend.
 
-```
-.
-├── backend/                  FastAPI app + SQLite + manifest parser
-│   ├── app/
-│   │   ├── auth.py          bcrypt hashing + JWT issue/verify
-│   │   ├── config.py        JWT secret + expiry
-│   │   ├── db.py            SQLAlchemy engine / session
-│   │   ├── main.py          FastAPI app, CORS, route registration
-│   │   ├── models.py        User, Cargo
-│   │   ├── parser.py        manifest parser + business rules
-│   │   ├── rbac.py          require_role("Admin") with 403 message
-│   │   ├── routes/auth.py   /signup, /login
-│   │   ├── routes/cargo.py  GET /api/cargo, POST /api/upload
-│   │   └── schemas.py       Pydantic models
-│   ├── tests/test_rules.py  pytest for Sector-7 + prime rules + parser
-│   └── requirements.txt
-└── frontend/                 Vite + React + TypeScript SPA
-    ├── src/api/client.ts    fetch wrapper with JWT auto-attach
-    ├── src/auth/            AuthContext + ProtectedRoute
-    ├── src/pages/           Login, Signup, Dashboard
-    ├── src/components/      CargoTable, UploadButton
-    └── src/styles.css
-```
-
-Each PDF task was developed in its own git worktree on a feature branch (`task-1-foundation`, `task-2-core-engine`, `task-3-frontend`) and merged into `main` on completion.
-
-## Prerequisites
-
-- **Python 3.12** (3.13 works but the original passlib version had issues — we use direct `bcrypt` now)
-- **Node.js 20+** with npm 10+
-- That's it — SQLite is bundled with Python
-
-## Backend setup
+**Terminal 1 — backend (port 8000):**
 
 ```bash
 cd backend
-
-# create + activate a venv
 python -m venv .venv
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-# macOS / Linux
-source .venv/bin/activate
-
+.venv\Scripts\Activate.ps1   # or: source .venv/bin/activate
 pip install -r requirements.txt
-
-# launch the API on port 8000 (CORS allows http://localhost:5173)
 uvicorn app.main:app --reload --port 8000
 ```
 
-The first request creates `cargo.db` (SQLite) in the `backend/` directory.
-
-### Creating an Admin user
-
-Role assignment is enforced by the backend, not the client. Sign up with an email ending **exactly** in `@nebula-corp.com` and the user is provisioned as `Admin`; everything else gets `Standard`.
-
-```bash
-curl -X POST http://localhost:8000/signup \
-  -H "Content-Type: application/json" \
-  -d '{"email":"founder@nebula-corp.com","password":"secret123"}'
-# → {"id": 1, "email": "founder@nebula-corp.com", "role": "Admin"}
-```
-
-### Sample `manifest.txt`
-
-Pipe-delimited with an optional header row:
-
-```
-ID|ORIGIN|DESTINATION|WEIGHT
-C1|Mars|Sector-7|100
-C2|Mars|Sector-7|4
-C3|Jupiter|Mars|8
-C4|Jupiter|Mars|2
-C5|Saturn|Earth|9999
-C6|Pluto|Sector-7-Outpost|10
-C7|Mars|Sector-7|2
-```
-
-Upload as Admin:
-
-```bash
-curl -X POST http://localhost:8000/api/upload \
-  -H "Authorization: Bearer <admin-jwt>" \
-  -F "file=@manifest.txt"
-# → {"received":7,"saved":5,"skipped_prime":2,"malformed":0}
-```
-
-Business rules applied (see `backend/app/parser.py`):
-- Destinations **containing** `Sector-7` have their weight multiplied by **1.45**.
-- The result is rounded to the nearest whole number (round-half-up).
-- If the rounded weight is **prime**, the row is **dropped**.
-
-### Running the backend tests
-
-```bash
-cd backend
-pytest -q
-```
-
-## Frontend setup
+**Terminal 2 — frontend (port 5173):**
 
 ```bash
 cd frontend
 npm install
-npm run dev    # http://localhost:5173
+npm run dev
 ```
 
-The dashboard calls the backend at `http://localhost:8000` (see `frontend/src/api/client.ts`). Make sure the backend is running first.
+Open `http://localhost:5173`. The Vite dev server proxies nothing — the SPA calls the API directly at `http://localhost:8000` (CORS is whitelisted for `localhost:5173`).
 
-### What each role sees
+## Browser test plan
 
-| Role     | Upload button     | Weight column        |
-|----------|-------------------|----------------------|
-| Admin    | rendered          | `<N> KG`             |
-| Standard | **absent in DOM** | `<N * 2.20462> LBS`  |
+### 1. Sign up two users
 
-Sort order is heaviest → lightest, with **any cargo destined for `Earth` pinned to the absolute bottom** regardless of weight.
+From the Sign-up screen create:
+- `founder@nebula-corp.com` / any password → backend provisions as **Admin**
+- `crew@example.com` / any password → backend provisions as **Standard**
 
-### Production build
+After each signup the SPA auto-logs you in and routes to `/dashboard`. Log out between accounts via the **Log out** button.
+
+### 2. Admin view (Business Rule 2 — KG)
+
+Log in as `founder@nebula-corp.com`. The dashboard should show:
+
+- A **role pill** reading `Admin`
+- An **Upload manifest** button
+- Weights in the table formatted as `<N> KG`
+
+Click **Upload manifest** and choose `../worktrees/task-2-core-engine/sample_manifest.txt` (or any pipe-delimited file). The success line should read:
+
+> Uploaded 7 rows — saved 5, skipped 2 prime, 0 malformed.
+
+### 3. Standard view (Business Rule 2 — LBS; upload absent from DOM)
+
+Log out and back in as `crew@example.com`. Verify:
+
+- The role pill reads `Standard`.
+- The **Upload manifest** button is **not** anywhere on the page.
+- Weight column is now formatted as `<N> LBS` and values are KG × 2.20462.
+
+**Prove the button is not in the DOM** (this is the PDF's exact rule):
+
+1. Open DevTools → Elements.
+2. `Ctrl+F` in the Elements panel, search for `Upload manifest`.
+3. Zero matches — the element is conditionally not rendered, not merely hidden.
+
+Or in the Console:
+
+```js
+[...document.querySelectorAll('button')].filter(b => /Upload manifest/.test(b.textContent))
+// → []  (empty array)
+```
+
+### 4. Earth pin (Business Rule 3)
+
+In both roles the table is sorted heaviest → lightest, **except** every row whose `destination` is `Earth` is pinned to the bottom regardless of weight. Using the seed manifest you uploaded:
+
+| Position | Cargo | Weight (KG) | Why |
+|---------:|------|------------:|-----|
+| 1 | C1 (Sector-7)        | 145 | heaviest non-Earth |
+| 2 | C6 (Sector-7-Outpost)| 15  | |
+| 3 | C3 (Mars)            | 8   | |
+| 4 | C2 (Sector-7)        | 6   | |
+| 5 | C5 (Earth)           | 9999| **pinned bottom despite being the heaviest** |
+
+The `Earth` row is also tinted blue (`tr.earth-row` in `src/styles.css`) so it's visually obvious.
+
+### 5. Logout
+
+Click **Log out** — the SPA clears the JWT from `localStorage` and routes back to `/login`. Refresh the page; you should land on `/login`, confirming session persistence is cleared.
+
+## Production build sanity
 
 ```bash
 cd frontend
-npm run build
-npm run preview
+npm run build      # tsc --noEmit && vite build → 42 modules transformed
+npm run preview    # serves the built bundle on http://localhost:4173
 ```
 
-## Reset the database
+## Submission email
 
-```bash
-rm backend/cargo.db
-# next API call recreates the schema
-```
+- Subject: `Final Submission - Badhey - Portal Complete`
+- Body: GitHub repo link + Loom/YouTube video link.
+- Video name: `Final Submission - Badhey - Frontend Dashboard`. Recording must show **all four** of: Admin login (Upload visible + KG), logout, Standard login (no Upload in DOM + LBS), Earth row at the bottom. Include a webcam headshot per the PDF.
