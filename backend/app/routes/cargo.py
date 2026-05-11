@@ -35,6 +35,7 @@ async def upload_manifest(
                 origin=row["origin"],
                 destination=row["destination"],
                 weight_kg=row["weight_kg"],
+                manifest_date=row.get("manifest_date"),
             )
         )
     db.commit()

@@ -30,14 +30,14 @@ Open `http://localhost:5173`. The Vite dev server proxies nothing — the SPA ca
 ### 1. Sign up two users
 
 From the Sign-up screen create:
-- `founder@nebula-corp.com` / any password → backend provisions as **Admin**
-- `crew@example.com` / any password → backend provisions as **Standard**
+- `founderabcd@nebula-corp.com` / any password → backend provisions as **Admin**
+- `crewabcd@example.com` / any password → backend provisions as **Standard**
 
 After each signup the SPA auto-logs you in and routes to `/dashboard`. Log out between accounts via the **Log out** button.
 
 ### 2. Admin view (Business Rule 2 — KG)
 
-Log in as `founder@nebula-corp.com`. The dashboard should show:
+Log in as `founderabcd@nebula-corp.com`. The dashboard should show:
 
 - A **role pill** reading `Admin`
 - An **Upload manifest** button
@@ -49,7 +49,7 @@ Click **Upload manifest** and choose `../worktrees/task-2-core-engine/sample_man
 
 ### 3. Standard view (Business Rule 2 — LBS; upload absent from DOM)
 
-Log out and back in as `crew@example.com`. Verify:
+Log out and back in as `crewabcd@example.com`. Verify:
 
 - The role pill reads `Standard`.
 - The **Upload manifest** button is **not** anywhere on the page.
